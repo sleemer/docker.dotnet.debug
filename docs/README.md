@@ -6,3 +6,6 @@ Tested environment:
 * dotnet: 2.0.0-preview1-005977
 * vscode: 1.13.0-insider (1.13.0-insider)
 * ms-vscode.csharp: 1.10.0
+
+Known issues (or features?!):
+1. Using this approach (start container with the app and only then attach to it) we can't really start to debug application from the first line of code.
