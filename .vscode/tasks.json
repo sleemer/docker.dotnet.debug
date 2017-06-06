@@ -1,0 +1,21 @@
+{
+    "version": "0.1.0",
+    "osx": {
+        "command": "/bin/bash",
+        "options": {
+            "cwd": "${workspaceRoot}"
+        },
+        "tasks": [
+            {
+                "taskName": "buildForDebug",
+                "suppressTaskName": true,
+                "args": [
+                    "-c",
+                    "./scripts/dockerTask.sh buildForDebug debug"
+                ],
+                "isBuildCommand": false,
+                "showOutput": "always"
+            }
+        ]
+    }
+}
