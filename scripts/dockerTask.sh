@@ -2,6 +2,23 @@ imageName="docker.dotnet.debug"
 containerName="${imageName}_1"
 workdir="src"
 
+# Kills all containers based on the image
+killContainers () {
+  echo "Killing all containers based on the ${imageName} image"
+  docker rm --force $(docker ps -q -a --filter "ancestor=${imageName}")
+}
+
+# Removes the Docker image
+removeImage () {
+  imageId=$(docker images -q ${imageName})
+  if [[ -z ${imageId} ]]; then
+    echo "${imageName} is not found."
+  else
+    echo "Removing image ${imageName}"
+    docker rmi ${imageId}
+  fi
+}
+
 # Builds the Docker image.
 buildImage () {
   if [[ -z $ENVIRONMENT ]]; then
@@ -21,50 +38,42 @@ buildImage () {
   fi
 }
 
+# Runs a new container
 runContainer () {
     echo "Running a new container $containerName"
     if [[ -z $(docker images -q $imageName) ]]; then
         echo "Couldn not find an image named $imageName"
     else
-        containerId=$(docker ps -f "name=$containerName" -q -n=1)
-        if [[ ! -z $containerId ]]; then
-            docker stop $containerId
-            docker rm $containerId
-        fi
         docker run -d --name $containerName $imageName
     fi
 }
 
 # Shows the usage for the script.
 showUsage () {
-  echo "Usage: dockerTask.sh [COMMAND] (ENVIRONMENT)"
-  echo "    Runs build or compose using specific environment (if not provided, debug environment is used)"
+  echo "Usage: dockerTask.sh [COMMAND]"
+  echo "    Runs command"
   echo ""
   echo "Commands:"
-  echo "    build: Builds a Docker image ('$imageName')."
-  echo "    compose: Runs docker-compose."
-  echo "    clean: Removes the image '$imageName' and kills all containers based on that image."
-  echo "    composeForDebug: Builds the image and runs docker-compose."
-  echo "    startDebugging: Finds the running container and starts the debugger inside of it."
-  echo ""
-  echo "Environments:"
-  echo "    debug: Uses debug environment."
-  echo "    release: Uses release environment."
+  echo "    cleanup: Removes the image '$imageName' and kills all containers based on this image."
+  echo "    buildForDebug: Builds the debug image and runs docker container."
   echo ""
   echo "Example:"
-  echo "    ./dockerTask.sh build debug"
+  echo "    ./dockerTask.sh buildForDebug"
   echo ""
   echo "    This will:"
-  echo "        Build a Docker image named $imageName using debug environment."
+  echo "        Build a Docker image named $imageName using debug environment and start a new Docker container."
 }
 
 if [ $# -eq 0 ]; then
   showUsage
 else
   case "$1" in
+    "cleanup")
+            killContainers
+            removeImage
+            ;;
     "buildForDebug")
-            ENVIRONMENT=$(echo $2 | tr "[:upper:]" "[:lower:]")
-            export REMOTE_DEBUGGING=1
+            killContainers
             buildImage
             runContainer
             ;;

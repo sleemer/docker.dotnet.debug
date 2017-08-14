@@ -11,7 +11,17 @@
                 "suppressTaskName": true,
                 "args": [
                     "-c",
-                    "./scripts/dockerTask.sh buildForDebug debug"
+                    "./scripts/dockerTask.sh buildForDebug"
+                ],
+                "isBuildCommand": false,
+                "showOutput": "always"
+            },
+            {
+                "taskName": "cleanup",
+                "suppressTaskName": true,
+                "args": [
+                    "-c",
+                    "./scripts/dockerTask.sh cleanup"
                 ],
                 "isBuildCommand": false,
                 "showOutput": "always"

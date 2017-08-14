@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Diagnostics;
 using System.Threading;
 
 namespace src
@@ -7,11 +9,7 @@ namespace src
     {
         static void Main(string[] args)
         {
-            for (int i = 0; i < 60; i++)
-            {
-                Console.WriteLine($"{i:00} - Hello World!");
-                Thread.Sleep(1000);
-            }
+            Console.WriteLine("Hello Debug World");
         }
     }
 }

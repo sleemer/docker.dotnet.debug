@@ -4,9 +4,10 @@
         {
             "name": ".NET Core Docker Launch (console)",
             "type": "coreclr",
-            "request": "attach",
+            "request": "launch",
             "preLaunchTask": "buildForDebug",
-            "processName": "dotnet",
+            "program": "/app/out/App.dll",
+            "cwd": "/app/out",
             "sourceFileMap": {
                 "/app": "${workspaceRoot}/src"
             },

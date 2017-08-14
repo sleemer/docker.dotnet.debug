@@ -16,4 +16,5 @@ RUN dotnet restore
 COPY . /app
 RUN dotnet publish -c Debug -o out
 
-ENTRYPOINT ["/bin/bash", "-c", "if [ -z \"$REMOTE_DEBUGGING\" ]; then dotnet out/App.dll; else sleep infinity; fi"]
+# Kick off a container just to wait debugger to attach and run the app
+ENTRYPOINT ["/bin/bash", "-c", "sleep infinity"]
