@@ -15,9 +15,7 @@
                 "pipeProgram": "docker",
                 "pipeCwd": "${workspaceRoot}",
                 "pipeArgs": [
-                    "exec",
-                    "-i",
-                    "docker.dotnet.debug_1"
+                    "exec -i docker.dotnet.debug_1"
                 ],
                 "quoteArgs": false,
                 "debuggerPath": "/vsdbg/vsdbg"

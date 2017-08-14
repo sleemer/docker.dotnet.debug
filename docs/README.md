@@ -1,5 +1,77 @@
 # This is a sample that demonstrates how to use vscode to build and debug dotnet core 2.0 console application in docker container. 
 
+## Our goal
+What we're going to achive is to be able to build our dotnet core application or library inside a Docker container, so we don't need to install an appropriate sdk on our host machine. After we successfully build an image with the app, we need to spin up a new container and attach debugger to our app inside this container.
+
+## Step-by-step guidline
+1. First of all we are going to create a docker file that will describes how we are going to build a Docker image with our application.
+```dockerfile
+FROM microsoft/dotnet:2-sdk
+ENV NUGET_XMLDOC_MODE skip
+WORKDIR /vsdbg
+
+# Installing vsdbg debbuger into our container 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       unzip \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l /vsdbg
+
+# Copying source files into container and publish it
+RUN mkdir /app
+WORKDIR /app
+
+COPY App.csproj /app
+RUN dotnet restore
+
+COPY . /app
+RUN dotnet publish -c Debug -o out
+
+# Kick off a container just to wait debugger to attach and run the app
+ENTRYPOINT ["/bin/bash", "-c", "sleep infinity"]
+```
+2. Then we create a script file dockerTask.sh that will contain utill task buildForDebug.
+This task is responsible for:
+    - stoping and removing old container(s)
+    - building a new image
+    - running a new container 
+3. Add task configuration to tasks.json
+```json
+{
+    "taskName": "buildForDebug",
+    "suppressTaskName": true,
+    "args": [
+        "-c",
+        "./scripts/dockerTask.sh buildForDebug"
+    ],
+    "isBuildCommand": false,
+    "showOutput": "always"
+}
+```
+4. And the last step is to create the launch configuration in launch.json
+```json
+{
+    "name": ".NET Core Docker Launch (console)",
+    "type": "coreclr",
+    "request": "launch",                    # we are going to run a new instance of our application
+    "preLaunchTask": "buildForDebug",       # name of the task that will build and run a container
+    "program": "/app/out/App.dll",          # path to program to run inside a container
+    "cwd": "/app/out",                      # working directory inside a container
+    "sourceFileMap": {
+        "/app": "${workspaceRoot}/src"      # mapping of source code inside a container to the source code on a host machine
+    },
+    "pipeTransport": {
+        "pipeProgram": "docker",            # use Docker as a pipe program
+        "pipeCwd": "${workspaceRoot}",
+        "pipeArgs": [
+            "exec -i docker.dotnet.debug_1" # attach to container and execute command of running app with attached debbuger
+        ],
+        "quoteArgs": false,
+        "debuggerPath": "/vsdbg/vsdbg"      # path to installed debugger inside a container
+    }
+}
+```
+
 Tested environment:
 * OS: macOS Sierra 10.12.6
 * Docker: 17.07.0-ce-rc1-mac21 (18848)
