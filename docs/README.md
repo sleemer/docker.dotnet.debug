@@ -6,7 +6,7 @@ What we're going to achieve is to be able to build our dotnet core application o
 ## Step-by-step guidline
 1. First of all we need to create a docker file that will describe how we are going to build a Docker image with our application.
 ```dockerfile
-FROM microsoft/dotnet:2-sdk
+FROM microsoft/dotnet:2.1-sdk
 ENV NUGET_XMLDOC_MODE skip
 WORKDIR /vsdbg
 
@@ -75,11 +75,11 @@ This task is responsible for:
 And that's basically it. For more details and the full example see the code in the repo.
 
 Tested environment:
-* OS: macOS Sierra 10.12.6
-* Docker: 17.07.0-ce-rc1-mac21 (18848)
-* dotnet: 2.0.0-preview2-006497
-* vscode: Version 1.16.0-insider (1.16.0-insider)
-* ms-vscode.csharp: 1.12.0
+* OS: macOS High Sierra 10.13.6
+* Docker: 18.05.0-ce-mac67 (25042)
+* dotnet: 2.1
+* vscode: Version 1.26.0-insider
+* ms-vscode.csharp: 1.15.2
 
 Known issues (or features?!):
 1. We run container in 'runContainer' task, but we start app in this container only when we decided to debug it. So, in order to do that, we have to attach to the running container and provide the name of container in launch.json. By doing that we have to keep in sync the name of the container in two files. That's not that elegant solution, and definitely is a violation of SRP.
