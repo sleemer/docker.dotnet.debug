@@ -1,31 +1,34 @@
 {
-    "version": "0.1.0",
-    "osx": {
-        "command": "/bin/bash",
-        "options": {
-            "cwd": "${workspaceRoot}"
-        },
-        "tasks": [
-            {
-                "taskName": "buildForDebug",
-                "suppressTaskName": true,
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "buildForDebug",
+            "type": "shell",
+            "osx": {
+                "command": "/bin/bash",
                 "args": [
                     "-c",
                     "./scripts/dockerTask.sh buildForDebug"
                 ],
-                "isBuildCommand": false,
-                "showOutput": "always"
             },
-            {
-                "taskName": "cleanup",
-                "suppressTaskName": true,
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "cleanup",
+            "type": "shell",
+            "osx": {
+                "command": "/bin/bash",
                 "args": [
                     "-c",
                     "./scripts/dockerTask.sh cleanup"
-                ],
-                "isBuildCommand": false,
-                "showOutput": "always"
+                ]
             }
-        ]
-    }
+        }
+    ]
 }
